@@ -49,6 +49,9 @@ terraform {
       TF_VAR_aws_region = local.common.inputs.aws_region
       TF_VAR_domain = local.common.inputs.domain
 
+      TF_VAR_master_account_id = local.common.inputs.master_account_id
+      TF_VAR_master_account_email = local.common.inputs.master_account_email
+
       TF_VAR_shared_services_account_id = local.common.inputs.shared_services_account_id
       TF_VAR_shared_services_account_email = local.common.inputs.shared_services_account_email
 
