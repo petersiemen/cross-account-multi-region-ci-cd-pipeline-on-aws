@@ -7,12 +7,7 @@ resource "aws_organizations_organization" "org" {
     "TAG_POLICY"
   ]
   aws_service_access_principals = [
-    "tagpolicies.tag.amazonaws.com",
-    "cloudtrail.amazonaws.com",
-    "compute-optimizer.amazonaws.com",
-    "config.amazonaws.com",
-    "fms.amazonaws.com",
-    "sso.amazonaws.com",
+    "tagpolicies.tag.amazonaws.com"
   ]
 }
 
@@ -33,3 +28,10 @@ resource "aws_organizations_account" "production" {
   name = "production"
   email = var.production_account_email
 }
+
+#terragrunt import aws_organizations_account.machine-learning xxxxx
+resource "aws_organizations_account" "machine-learning" {
+  name = "machine-learning"
+  email = var.machine_learning_account_email
+}
+

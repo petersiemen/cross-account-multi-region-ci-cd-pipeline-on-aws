@@ -9,11 +9,11 @@ remote_state {
     if_exists = "overwrite_terragrunt"
   }
   config = {
-    bucket = "homepage-master-terraform-state"
+    bucket = "homepage-production-terraform-state"
     key = "${path_relative_to_include()}/terraform.tfstate"
     region = local.common.inputs.aws_region
     encrypt = true
-    dynamodb_table = "terraform-lock"
+    dynamodb_table = "production-terraform-lock"
   }
 }
 
@@ -21,20 +21,47 @@ generate "provider" {
   path = "generated-provider.tf"
   if_exists = "overwrite_terragrunt"
   contents = <<EOF
+
 provider "aws" {
   region  = "eu-central-1"
+  profile = "homepage-master"
+  assume_role {
+    role_arn  = "arn:aws:iam::${local.common.inputs.machine_learning_account_id}:role/OrganizationAccountAccessRole"
+  }
+}
+
+provider "aws" {
+  alias = "eu-west-1"
+  region = "eu-west-1"
+  profile = "homepage-master"
+  assume_role {
+    role_arn  = "arn:aws:iam::${local.common.inputs.machine_learning_account_id}:role/OrganizationAccountAccessRole"
+  }
 }
 
 provider "aws" {
   alias = "us-east-1"
   region = "us-east-1"
+  profile = "homepage-master"
+  assume_role {
+    role_arn  = "arn:aws:iam::${local.common.inputs.machine_learning_account_id}:role/OrganizationAccountAccessRole"
+  }
+}
+
+provider "aws" {
+  alias = "shared-services"
+  region  = "eu-central-1"
+  profile = "homepage-master"
+  assume_role {
+    role_arn  = "arn:aws:iam::${local.common.inputs.shared_services_account_id}:role/OrganizationAccountAccessRole"
+  }
 }
 
 EOF
 }
 
-
 terraform {
+
   extra_arguments "common_vars" {
     commands = [
       "plan",
@@ -49,9 +76,6 @@ terraform {
       TF_VAR_aws_region = local.common.inputs.aws_region
       TF_VAR_domain = local.common.inputs.domain
 
-      TF_VAR_master_account_id = local.common.inputs.master_account_id
-      TF_VAR_master_account_email = local.common.inputs.master_account_email
-
       TF_VAR_shared_services_account_id = local.common.inputs.shared_services_account_id
       TF_VAR_shared_services_account_email = local.common.inputs.shared_services_account_email
 
@@ -63,7 +87,6 @@ terraform {
 
       TF_VAR_machine_learning_account_id = local.common.inputs.machine_learning_account_id
       TF_VAR_machine_learning_account_email = local.common.inputs.machine_learning_account_email
-
     }
   }
 

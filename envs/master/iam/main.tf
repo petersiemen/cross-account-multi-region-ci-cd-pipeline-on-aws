@@ -18,6 +18,34 @@ resource "aws_iam_group_policy_attachment" "admin-group-policy" {
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
+resource "aws_iam_group_policy_attachment" "admin-group-billing-policy" {
+  group = aws_iam_group.admin.id
+  policy_arn = "arn:aws:iam::aws:policy/job-function/Billing"
+}
+
+
+//resource "aws_iam_policy" "billing-full-access" {
+//  name = "BillingFullAccess"
+//  policy = <<EOF
+//{
+//    "Version": "2012-10-17",
+//    "Statement": [
+//        {
+//            "Effect": "Allow",
+//            "Action": "aws-portal:*",
+//            "Resource": "*"
+//        }
+//    ]
+//}
+//EOF
+//}
+//
+//resource "aws_iam_group_policy_attachment" "admin-group-billing-policy" {
+//  group = aws_iam_group.admin.id
+//  policy_arn = aws_iam_policy.billing-full-access.arn
+//}
+
+
 resource "aws_iam_policy" "admin-assume-role" {
   name = "admin-assume-role"
   path = "/terraform/"
